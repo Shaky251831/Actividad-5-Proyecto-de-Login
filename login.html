@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Control Escolar</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="bg-dark d-flex align-items-center justify-content-center vh-100">
+
+    <div class="card p-4 shadow-lg w-100" style="max-width: 400px;">
+        <div class="card-body text-center">
+            <h2 class="text-primary mb-2">-Iniciar Sesión-</h2>
+            <p class="text-muted small mb-4">Valida tu acceso.</p>
+
+            <form id="formLogin">
+                <div class="mb-3" style="text-align: left;">
+                    <label for="correo" class="form-label fw-bold small text-secondary">CORREO</label>
+                    <input type="email" id="correo" class="form-control" placeholder="ejemplo@correo.com" required>
+                </div>
+
+                <div class="mb-4" style="text-align: left;">
+                    <label for="password" class="form-label fw-bold small text-secondary">CONTRASEÑA</label>
+                    <input type="password" id="password" class="form-control" placeholder="********" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/utileria.js"></script>
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const correo = document.getElementById('correo').value;
+            const password = document.getElementById('password').value;
+
+            if (!validarCorreo(correo)) {
+                alert("Por favor, introduce un correo electrónico válido.");
+                return;
+            }
+            if (!validarPassword(password)) {
+                alert("La contraseña debe tener mínimo 8 caracteres, incluir mayúscula, minúscula, número y carácter especial.");
+                return;
+            }
+
+            localStorage.setItem('usuarioLogueado', correo);
+            alert("¡Validaciones correctas! Redirigiendo al sistema...");
+            window.location.href = "index.html";
+        });
+    </script>
+</body>
+</html>
