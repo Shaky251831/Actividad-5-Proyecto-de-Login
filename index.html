@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Sistema</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="bg-light">
+     // Navbar
+    <nav class="navbar navbar-dark bg-dark shadow-sm px-3">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-outline-light" id="btnToggle">☰</button>
+            <span class="text-white fw-bold fs-5">Sistema Escolar</span>
+        </div>
+        
+        <div>
+            <button class="btn btn-primary fw-bold" id="btnSalir">Salir</button>
+        </div>
+    </nav>
+        //sidebar 
+    <div class="d-flex">
+        <div class="bg-dark p-3 d-flex flex-column" id="sidebar">
+            <ul class="nav flex-column mb-auto">
+                <li class="w-100">
+                    <a href="#" class="nav-link text-white fw-bold d-flex justify-content-between align-items-center" id="menuUsuarios">
+                        Usuarios <span>▼</span>
+                    </a>
+                    <ul class="nav flex-column ms-3 rounded mt-1 p-1" id="submenuUsuarios" style="display: none; background-color: #343a40;">
+                        <li><a href="#" class="nav-link text-white small" id="opcCaptura">Captura</a></li>
+                    </ul>
+                </li>
+                <li class="w-100">
+                    <a href="#" class="nav-link text-white fw-bold mt-2" id="opcAlumnos">Alumnos</a>
+                </li>
+            </ul>
+        </div>
+
+        <main class="main-content-area">
+            
+            <section class="card card-form p-4 shadow-sm mx-auto" id="formSectionUsuarios" style="max-width: 500px;">
+                <h2 class="fs-5 text-dark mb-4" style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px;">Captura de Usuario</h2>
+                <form id="formUsuarios">
+                    <div class="mb-3">
+                        <label for="usrNombre" class="form-label fw-semibold text-secondary">Nombre de Usuario (Solo letras):</label>
+                        <input type="text" class="form-control" id="usrNombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="usrCorreo" class="form-label fw-semibold text-secondary">Correo Electrónico:</label>
+                        <input type="email" class="form-control" id="usrCorreo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="usrPassword" class="form-label fw-semibold text-secondary">Contraseña:</label>
+                        <input type="password" class="form-control" id="usrPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">Validar y Guardar Usuario</button>
+                </form>
+            </section>
+
+            <section class="card card-form p-4 shadow-sm mx-auto" id="formSectionAlumnos" style="max-width: 500px;">
+                <h2 class="fs-5 text-dark mb-4" style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px;">Formulario de Alumnos</h2>
+                <form id="formAlumnos">
+                    <div class="mb-3">
+                        <label for="alControl" class="form-label fw-semibold text-secondary">Número de Control (6 dígitos):</label>
+                        <input type="number" class="form-control" id="alControl" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="alFechaNac" class="form-label fw-semibold text-secondary">Fecha de Nacimiento:</label>
+                        <input type="date" class="form-control" id="alFechaNac" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">Validar Alumno</button>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-custom" id="miModal">
+        <div class="modal-dialog-custom">
+            <div class="modal-header-custom">
+                <span class="fw-bold small">Estatus del Alumno</span>
+                <button type="button" class="btn-close-custom" id="cerrarModal">&times;</button>
+            </div>
+            <div class="modal-body-custom" id="txtResultadoEdad"></div>
+        </div>
+    </div>
+
+    <script src="js/utileria.js"></script>
+    <script>
+        // Control de acceso.
+        const usuarioLogueado = localStorage.getItem('usuarioLogueado');
+        if (!usuarioLogueado) {
+            window.location.href = "login.html";
+        }
+
+        // Control SIDEBAR
+        document.getElementById('btnToggle').onclick = () => document.getElementById('sidebar').classList.toggle('collapsed');
+        
+        const menuUsuarios = document.getElementById('menuUsuarios');
+        const submenuUsuarios = document.getElementById('submenuUsuarios');
+        menuUsuarios.onclick = () => submenuUsuarios.style.display = submenuUsuarios.style.display === "block" ? "none" : "block";
+
+        const secUsuarios = document.getElementById('formSectionUsuarios');
+        const secAlumnos = document.getElementById('formSectionAlumnos');
+
+        document.getElementById('opcCaptura').onclick = () => {
+            secUsuarios.classList.add('active');
+            secAlumnos.classList.remove('active');
+        };
+
+        document.getElementById('opcAlumnos').onclick = () => {
+            secAlumnos.classList.add('active');
+            secUsuarios.classList.remove('active');
+        };
+
+        // Salir.
+        document.getElementById('btnSalir').onclick = () => {
+            localStorage.removeItem('usuarioLogueado');
+            window.location.href = "login.html";
+        };
+
+        // Validación de formulacio de usuarios.
+        document.getElementById('formUsuarios').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('usrNombre').value;
+            const correo = document.getElementById('usrCorreo').value;
+            const password = document.getElementById('usrPassword').value;
+
+            if(!soloLetras(nombre)){ alert("El nombre de usuario solo debe contener letras."); return; }
+            if(!validarCorreo(correo)){ alert("Formato de correo inválido."); return; }
+            if(!validarPassword(password)){ alert("La contraseña no cumple con los requisitos de seguridad."); return; }
+            alert("¡Usuario validado y guardado correctamente!");
+        });
+
+        // Validacion de formulario de alumnos.
+        document.getElementById('formAlumnos').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const control = document.getElementById('alControl').value;
+            const fechaNac = document.getElementById('alFechaNac').value;
+
+            if(!validarLongitud(control, 6) || control.length !== 6){
+                alert("El número de control debe tener exactamente 6 dígitos.");
+                return;
+            }
+
+            const edad = calcularEdad(fechaNac);
+            const esMayor = esMayorDeEdad(fechaNac);
+            
+            document.getElementById('txtResultadoEdad').innerHTML = `Edad calculada: <strong>${edad} años</strong>.<br><br> ${esMayor ? '<span class="badge bg-success">Es mayor de edad</span>' : '<span class="badge bg-danger">Es menor de edad</span>'}`;
+            document.getElementById('miModal').style.display = "block";
+        });
+
+        document.getElementById('cerrarModal').onclick = () => document.getElementById('miModal').style.display = "none";
+    </script>
+</body>
+</html>
