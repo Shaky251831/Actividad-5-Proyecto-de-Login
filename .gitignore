@@ -1,5 +1,5 @@
 # Dependencias
-node_modules/
+node.modules/
 jspm_packages/
 web_modules/
 
